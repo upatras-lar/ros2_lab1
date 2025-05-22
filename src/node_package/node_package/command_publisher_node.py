@@ -9,14 +9,15 @@ class CommandPublisher(Node):
     def __init__(self):
         super().__init__('command_publisher_node')
 
-        self.jerry_command_publisher = self.create_publisher(
-            msg_type=JerryCommand,
-            topic='/jerry_command',
-            qos_profile=1
-        )
+        ### TO DO ####
+
+        ### create publisher ####
 
         timer_period: float = 2.0
-        self.timer = self.create_timer(timer_period, self.publish_command)
+        
+        ### TO DO #####
+
+        ### create timer ####
 
         self.incremental_id: int = 0
     
@@ -25,21 +26,9 @@ class CommandPublisher(Node):
 
         jerry_command = JerryCommand()
 
-        p = random.random()
-        if (p < 0.25):
-            jerry_command.cmd = "forward"
-        elif (p < 0.5):
-            jerry_command.cmd = "right"
-        elif (p < 0.75):
-            jerry_command.cmd = "left"
-        else:
-            jerry_command.cmd = "backward"
-        
-        jerry_command.steps = random.randint(1, 5)
+       ### TO DO ###
 
-        self.jerry_command_publisher.publish(jerry_command)
-
-        self.get_logger().info(f"Your next command Jerry is : {jerry_command.cmd} for {jerry_command.steps} steps.")
+       ### publish a command to Jerry
 
         self.incremental_id += 1
 

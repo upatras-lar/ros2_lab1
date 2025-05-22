@@ -14,31 +14,17 @@ class JerryRobot(Node):
         self.x = 0.
         self.y = 0.
 
-        self.jerry_subscriber = self.create_subscription(
-            msg_type=JerryCommand,
-            topic='/jerry_command',
-            callback=self.execute_command,
-            qos_profile=1
-        )
+        #####  TO DO #####
+        ### Create subscription
 
-        self.jerry_server = self.create_service(
-            srv_type=DistanceFromObstacle,
-            srv_name='/distance',
-            callback=self.service_callback)
+        ### TO DO ####
+        ## Create server
 
     def execute_command(self, msg: JerryCommand):
         # Method that is called when a new command is received by Jerry.
-        self.get_logger().info(f"Aye aye captain! Moving {msg.cmd} for {msg.steps} steps.")
+        ### TO DO ###########
 
-        # Update Jerry's position
-        if (msg.cmd == "forward"):
-            self.y += msg.steps
-        elif (msg.cmd == "backward"):
-            self.y -= msg.steps
-        elif (msg.cmd == "right"):
-            self.x += msg.steps
-        else:
-            self.x -= msg.steps
+        ##### Print the command that Jerry executes
 
 
     def service_callback(self, request: DistanceFromObstacle.Request,
@@ -48,11 +34,8 @@ class JerryRobot(Node):
         It takes the x and y coordinates of the obstalce as an input and calculates
         the Euclidean distance from Jerry's current whereabouts.
         """
-        response.dist = math.dist([request.x, request.y], [self.x, self.y])
-
-        self.get_logger().info(f"Distance from the obstacle is: {response.dist}. Responding to the client...")
-
-        return response
+        #### TO DO #####
+        ### Return the response
 
 def main(args=None):
     """

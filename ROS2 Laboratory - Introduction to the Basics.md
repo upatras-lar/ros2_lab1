@@ -2,6 +2,8 @@
 
 ROS2 is basically a software that helps us have different processes talk to each other. You can have python scripts, C++ scripts, different external devices like cameras, sensors or motor all talk to each other using this framework.
 
+Documentation and help for the rclpy library that we are going to use in this lab can be found here: https://docs.ros.org/en/iron/p/rclpy/rclpy.html
+
 #### The basic ROS2 architecture
 
 We have nodes that talk to each other using interfaces. There is a number of different interfaces like messages, services and actions. Nodes can also be parameterized.
@@ -47,9 +49,9 @@ In the ***interfaces_package/msg*** directory, we will create a new *.msg* file.
 # "backward", "left", "right"
 # Integer data is the number of steps that Jerry will take
 
-#### TO BE COMPLETED BY THE STUDENTS ####
-string cmd
-int32 steps
+#### TO DO ####
+
+###############
 ```
 
 ##### The status service
@@ -74,11 +76,11 @@ In the ***interfaces_package/srv*** directory, we will create a new *.srv* file.
 # coordinates for the obstacle and the response is the Euclidean
 # distance between Jerry and the obstacle
 
-### TO BE COMPLETED BY THE STUDENTS ###
-float32 x
-float32 y
+### TO DO ###
+
 ---
-float 32 dist
+
+#############
 ```
 
 ##### Building and sourcing
@@ -94,20 +96,20 @@ source install/setup.bash
 
 Now that we have our interfaces, we can create nodes that communicate using these interfaces. The first node that we will make is the *CommandPublisher* node. We will use this node to periodically publish commands to Jerry.
 
-We use the **create_publisher()** method to create a publisher that publishes *jerry_command* over the topic */jerry_command*.
+We use the **create_publisher()** method to create a publisher called *jerry_command_publisher* that publishes *jerry_command* over the topic */jerry_command*.
 
 ```
-self.jerry_command_publisher = self.create_publisher(
-            msg_type=JerryCommand,
-            topic='/jerry_command',
-            qos_profile=1
-        )
+##### TO DO ######
+
+##################
 ```
 
 We will also create a timer that will call a *publish_command* method every 2 seconds. We can do that with the **create_timer()** method.
 
 ```
-self.timer = self.create_timer(timer_period, self.publish_command)
+##### TO DO #######
+
+###################
 ```
 
 In the *publish_command()* method we must first create a message of type *jerry_command* and then fill it with a random command (forward, backward, left, right) and a random number of steps. We can then use the **publish(msg)** method to publish our message to the topic.
@@ -118,21 +120,10 @@ def publish_command(self):
 
 	jerry_command = JerryCommand()
 
-	p = random.random()
-	if (p < 0.25):
-		jerry_command.cmd = "forward"
-	elif (p < 0.5):
-		jerry_command.cmd = "right"
-	elif (p < 0.75):
-		jerry_command.cmd = "left"
-	else:
-		jerry_command.cmd = "backward"
+	### TO DO ########
 
-	jerry_command.steps = random.randint(1, 5)
 
-	self.jerry_command_publisher.publish(jerry_command)
-
-	self.incremental_id += 1
+	##################
 ```
 
 ##### Test the publisher
@@ -158,20 +149,19 @@ To be able to control our robot, we need to create a subscriber node that subscr
 We will subscribe to the topic with the **create_subscription()** method. We need to specify what type of message we are expecting to receive, what topic we are subscribing at and what the callback function will be. The callback function is the one that will be called automatically when a message is received from the publisher.
 
 ```
-self.jerry_subscriber = self.create_subscription(
-	msg_type=JerryCommand,
-	topic='/jerry_command',
-	callback=self.execute_command,
-	qos_profile=1
-)
+#### TO DO #########
+
+####################
 ```
 
-The callback function is a function that expects the message type as an argument and does not return anything. In our case we want to create a callback function that receives the message that is the command that we published and then prints it (to simulate taking the action).
+The callback function is a function that expects the message type as an argument and does not return anything. In our case we want to create a callback function that receives the message that is the command that we published and then prints it (to simulate taking the action). We can use the *get_logger().info()* method to do that.
 
 ```
 def execute_command(self, msg: JerryCommand):
 	# Method that is called when a new command is received by Jerry.
-	self.get_logger().info(f"Aye aye captain! Moving {msg.cmd} for {msg.steps} steps.")
+	### TO DO ###########
+
+	#####################
 
 ```
 
@@ -194,18 +184,17 @@ ros2 run node_package jerry_robot_node
 
 If you remember our initial design we want to have a service going on through which we can ask about Jerry's status. For this we will use the **DistanceFromObstacle** service that we created earlier. This means that we must extend the capabilities of the **jerry_robot_node** to also be a server for the **DistanceFromObstacle** service. Remember this node knows exactly where Jerry is and will answer the client call with a Euclidean distance from the given obstacle.
 
-In the *__init__(self)*  method of the node we create the server with the *self.create_service()* command.
+In the *__init__(self)*  method of the node we create the server (called *jerry_server*) with the *self.create_service()* command.
 
 ```
-self.jerry_server = self.create_service(
-	srv_type=DistanceFromObstacle,
-	srv_name='/distance',
-	callback=self.service_callback)
+#####  TO DO ########
+
+#####################
 ```
 
 The *create_service()* function expects three arguments: the type of service, the name of the particular service and what function to call when a service request is made a client.
 
-The callback function's API dictates that we must give it both the request and the response as an argument which seems to be a bit weird but we must follow it. The function must return the response. The function is defined as follows:
+The callback function's API dictates that we must give it both the request and the response as an argument which seems to be a bit weird but we must follow it. So we must find the distance between Jerry's current whereabouts and the obstacle that we asked about. The function must return the response.The function is defined as follows:
 
 ```
 def service_callback(self, request: DistanceFromObstacle.Request,
@@ -215,11 +204,9 @@ def service_callback(self, request: DistanceFromObstacle.Request,
 	It takes the x and y coordinates of the obstalce as an input and calculates
 	the Euclidean distance from Jerry's current wherabouts.
 	"""
-	response.dist = math.dist([request.x, request.y], [self.x, self.y])
+	##### TO DO ###########
 
-	self.get_logger().info(f"Distance from the obstacle is: {response.dist}. Responding to the client...")
-
-	return response
+	#######################
 ```
 
 After this is done we must build and source as always.
@@ -236,19 +223,19 @@ Finally we will create one more node to serve as the client. The client's job is
 We will make a new node, like we did before, called **ClientNode** and create the client in the *__init__(self)* method with the *self.create_client()* method.
 
 ```
-self.service_client = self.create_client(
-	srv_type=DistanceFromObstacle,
-	srv_name='/distance'
-)
+##### TO DO ######
+
+##################
 ```
 
 Now that we have done that, let's think about how services work. Unlike messages the server needs to be available for the client to make a request. But we cannot expect the server node to always be available before the client, even if it was executed first! The order as well as the speed of execution of the various nodes depends on a lot of reasons, including ROS2 itself, the operating system etc.
 
-So before trying to make a service request to the server we can use the *self.service_client.wait_for_service()* method to wait until the server becomes available.
+So before trying to make a service request to the server we can use the *self.service_client.wait_for_service()* method to wait until the server becomes available. So let's check with this method if this service is available and then let's print it.
 
 ```
-while not self.service_server.wait_for_service(timeout_sec = 1.0):
-	self.get_logger().info(f"Server not available...")
+#### TO DO #########
+
+####################
 ```
 
 With this done, we can create a timer that periodically makes a request after the service server has become available.
@@ -261,7 +248,7 @@ timer_period: float = 0.5
 	)
 ```
 
-This will call the *timer_callback()* method every 0.5 seconds. Within this method we can make a service call with the *call_async()* method. This method will make a call to the server sending a request. First we must define a *Future* object to handle the servers response. After the answer comes back, we will use the *add_done_callback()* method on our future object to process the response.
+This will call the *make_request()* method every 0.5 seconds. Within this method we can make a service call with the *call_async()* method. This method will make a call to the server sending a request. First we must define a *Future* object to handle the servers response. After the answer comes back, we will use the *add_done_callback()* method on our future object to process the response.
 
 ```
 self.future: Future = None
@@ -269,16 +256,15 @@ self.future = self.service_client.call_async(request)
 self.future.add_done_callback(self.process_response)
 ```
 
-Now we must implement the *process_response()* method to handle the server's response. Let's just print the response we got.
+Now we must implement the *process_response()* method to handle the server's response. If we got a response we will print it, if we got no response, we will print that.
 
 ```
 def process_response(self, future: Future):
 	# Callback for the future, that will be called when it is done
 	response = future.result()
-	if response is not None:
-		self.get_logger().info(f"Jerry's distance from the obstacle is: {response.dist}")
-	else:
-		self.get_logger().info(f"The response was none.")
+	#### TO DO ########
+
+	##################
 ```
 
 As usual we build and source.

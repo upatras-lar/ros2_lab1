@@ -4,7 +4,6 @@
 # and the response is the Euclidean distance between Jerry
 # and the obstacle
 
-float32 x
-float32 y
----
-float32 dist
+#### TO DO ######
+
+#################

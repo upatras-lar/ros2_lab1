@@ -11,10 +11,7 @@ class ClientNode(Node):
     def __init__(self):
         super().__init__('client_node')
 
-        self.service_client = self.create_client(
-            srv_type=DistanceFromObstacle,
-            srv_name='/distance'
-        )
+        #### TO DO Create client ####
 
         while not self.service_client.wait_for_service(timeout_sec=1.0):
             self.get_logger().info(f"service {self.service_client.srv_name} not available, waiting ...")
@@ -47,10 +44,8 @@ class ClientNode(Node):
     def process_response(self, future: Future):
         # Callback for the future, that will be called when it is done
         response = future.result()
-        if response is not None:
-            self.get_logger().info(f"Jerry's distance from the obstacle is: {response.dist}")
-        else:
-            self.get_logger().info(f"The response was none.")
+        ### TO DO #####
+        ### Print if there was a response ####
 
 def main(args=None):
 
